@@ -33,7 +33,7 @@
 
   function onScroll() {
     var y = window.pageYOffset;
-    if (header) header.classList.toggle('scrolled', y > 60);
+    if (header) header.classList.toggle('scrolled', y > 50);
     if (toTop) toTop.classList.toggle('show', y > 600);
     ticking = false;
   }
@@ -48,9 +48,7 @@
     });
   }
 
-  /* ---------- HERO SLIDER ----------
-     Imagens lidas de data-hero-images no #heroBg (definido em cada HTML).
-     Ausente ou com 1 item => background estático, sem timer e sem dots. */
+  /* ---------- HERO SLIDER ---------- */
   (function heroSlider() {
     var bg = $('#heroBg');
     if (!bg) return;
@@ -87,7 +85,7 @@
 
     function restart() {
       clearInterval(timer);
-      if (!reduced) timer = setInterval(function () { paint(idx + 1); }, 6500);
+      if (!reduced) timer = setInterval(function () { paint(idx + 1); }, 7000); // Aumentado para curtir a animação css
     }
 
     if (dotsBox) {
@@ -111,9 +109,9 @@
   })();
 
   /* ---------- STAGGER NOS GRIDS ---------- */
-  $$('.features-grid,.plans-grid,.testimonials-grid,.stats-grid,.veja-tambem-grid').forEach(function (g) {
+  $$('.features-grid, .plans-grid, .testimonials-grid, .stats-grid, .veja-tambem-grid').forEach(function (g) {
     Array.prototype.forEach.call(g.children, function (c, i) {
-      c.style.transitionDelay = Math.min(i * 80, 480) + 'ms';
+      c.style.transitionDelay = Math.min(i * 100, 500) + 'ms'; // Suavizado para o novo CSS
     });
   });
 
@@ -148,9 +146,9 @@
       el.classList.add('in');
       io.unobserve(el);
     });
-  }, { rootMargin: '120px 0px', threshold: 0.08 });
+  }, { rootMargin: '100px 0px', threshold: 0.1 }); // Margem otimizada
 
-  $$('.reveal,[data-lazy-map],img[data-src]').forEach(function (el) { io.observe(el); });
+  $$('.reveal, [data-lazy-map], img[data-src]').forEach(function (el) { io.observe(el); });
 
   /* ---------- CONTADOR ---------- */
   var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -165,13 +163,14 @@
       var t0 = null;
       function step(ts) {
         if (!t0) t0 = ts;
-        var p = Math.min((ts - t0) / 1400, 1);
+        var p = Math.min((ts - t0) / 1800, 1); // Desacelerado levemente (1400 -> 1800) para visual premium
+        // Easing out cubic
         el.textContent = Math.floor(end * (1 - Math.pow(1 - p, 3))).toLocaleString('pt-BR');
         if (p < 1) requestAnimationFrame(step);
       }
       requestAnimationFrame(step);
     });
-  }, { threshold: 0.5 });
+  }, { threshold: 0.3 }); // Threshold ajustado para disparar na hora certa
 
   $$('[data-count]').forEach(function (el) { cio.observe(el); });
 })();
